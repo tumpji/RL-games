@@ -2,28 +2,35 @@
 #include <array>
 #include <cassert>
 
-template<int BOARD_SIZE=8>
+/** class Position
+ * stores information about position of figures
+ */
+template<int BOARD_SIZE_X, int BOARD_SIZE_Y>
 class Position {
 public:
-    Position(): x(0), y(0) {check();}
-    Position(int x, int y): x(x), y(y) {check();}
-    Position(int v): x(v % BOARD_SIZE), y(v / BOARD_SIZE) {check();}
+    Position(): x(0), y(0) {}
+    Position(int x, int y): x(x), y(y) {}
+    Position(int v): x(v % BOARD_SIZE_Y), y(v / BOARD_SIZE_Y) {}
 
-    inline void check() {assert(x >= 0 and y >= 0 and x < BOARD_SIZE and y < BOARD_SIZE);}
-
+    bool on_board () { return x >= 0 and y >= 0 and x < BOARD_SIZE_X and y < BOARD_SIZE_Y; }
+    
     bool operator== (Position p){ return x == p.x and y == p.y; }
+
 public:
     int x, y;
 };
 
 
+/** class Direction
+ * stores information about move of figure
+ */
 class Direction {
 public:
     Direction(): x(0), y(0) {}
     Direction(int x, int y): x(x), y(y) {}
 
-    template<int BOARD_SIZE>
-    Position<BOARD_SIZE> operator+(Position<BOARD_SIZE> p) {
+    template<int BOARD_SIZE_X, int BOARD_SIZE_Y>
+    Position<BOARD_SIZE_X, BOARD_SIZE_Y> operator+(Position<BOARD_SIZE_X, BOARD_SIZE_Y> p) {
         p.x += x;
         p.y += y;
         return p;
@@ -33,35 +40,29 @@ public:
     static Direction UP, DOWN, LEFT, RIGHT;
 };
 
-template<class Block, int BOARD_SIZE=8>
+/** class Board
+ * stores all 
+ */
+template<class Block, int BOARD_SIZE_X, int BOARD_SIZE_Y>
 class Board {
 protected:
     Board() { clean(); }
-
-    void clean () {
-        position.fill(Block());
-        //std::fill(position, position + BOARD_SIZE*BOARD_SIZE, 0);
-    }
-
-    bool on_board(Position<BOARD_SIZE> p) {
-        if ( p.x < 0 or p.y < 0 or p.x >= BOARD_SIZE or p.y >= BOARD_SIZE )
-            return false;
-        return true;
-    }
-    Block& get(Position<BOARD_SIZE> p) {
-        assert( on_board(p) );
-        return position[p.x + p.y*BOARD_SIZE];
+    void clean () { position.fill(Block()); }
+    
+    Block& get(Position<BOARD_SIZE_X, BOARD_SIZE_Y> p) {
+        assert(on_board(p));
+        return position[p.x + p.y*BOARD_SIZE_Y];
     }
 
 public:
     void debug_print() {
-        for (int a = 0; a < BOARD_SIZE; ++a) {
-            for (int b = 0; b < BOARD_SIZE; ++b) {
-                std::cout << position[a*BOARD_SIZE + b];
+        for (int a = 0; a < BOARD_SIZE_Y; ++a) {
+            for (int b = 0; b < BOARD_SIZE_X; ++b) {
+                std::cout << position[a*BOARD_SIZE_Y + b];
             }
-            std::cout << std::endl;
+            std::cout << "\n";
         }
     }
 protected:
-    std::array<Block, BOARD_SIZE*BOARD_SIZE> position;
+    std::array<Block, BOARD_SIZE_X*BOARD_SIZE_Y> position;
 };
