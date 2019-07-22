@@ -21,15 +21,12 @@ private:
     int item;
 };
 
-template<int BOARD_SIZE=8, int NUM_FOOD=1>
-class Snake: public Board<SnakeDirection, BOARD_SIZE> {
+template<int BOARD_SIZE_X, int BOARD_SIZE_Y, int NUM_FOOD=1>
+class Snake: public Board<SnakeDirection, BOARD_SIZE_X, BOARD_SIZE_Y> {
 public:
-    Snake(): random_generator(std::time(nullptr)), distribution(0, BOARD_SIZE*BOARD_SIZE-1), 
-    head(BOARD_SIZE/2, BOARD_SIZE/2), tail(head) {
-        generated_foods = 0;
-        snake_size = 1;
-        done = false;
-    }
+    Snake(): head(BOARD_SIZE_X/2, BOARD_SIZE_Y/2), tail(head), done(false), snake_size(1), generated_foods(0), 
+        random_generator(std::time(nullptr)), distribution(0, BOARD_SIZE_X*BOARD_SIZE_Y-1) 
+    { }
 
     bool game_finished () {return done;}
     
@@ -44,7 +41,7 @@ public:
             new_tail = this->get(tail) + tail;
 
         // hit  wall
-        if (not this->on_board(new_head)) {
+        if (not new_head.on_board()) {
             done = true;
             return 0;
         }
@@ -77,19 +74,20 @@ public:
         }
         
         sanity_check();
+        std::cout << new_head.x << " " << new_head.y << std::endl;
         return points;
     }
 
-
     void debug_print() {
+        std::cout << "   " << head.x << " " << head.y << std::endl;
         std::cout << "##";
-        for (int a = 0; a < BOARD_SIZE; ++a)
+        for (int a = 0; a < BOARD_SIZE_X; ++a)
             std::cout << "#";
         std::cout << std::endl;
-        for (int a = 0; a < BOARD_SIZE; ++a) {
-            std::cout << "|";
 
-            for (int b = 0; b < BOARD_SIZE; ++b) {
+        for (int a = 0; a < BOARD_SIZE_Y; ++a) {
+            std::cout << "|";
+            for (int b = 0; b < BOARD_SIZE_X; ++b) {
                 SnakeDirection d = this->get(SnakePosition(b,a));
                 if ( d.empty_space() ) {
                     if ( a == head.y and b == head.x )
@@ -112,15 +110,15 @@ public:
         }
 
         std::cout << "##";
-        for (int a = 0; a < BOARD_SIZE; ++a)
+        for (int a = 0; a < BOARD_SIZE_X; ++a)
             std::cout << "#";
         std::cout << std::endl;
     }
 
     void sanity_check () {
         int san_n_size = 0, san_n_food = 0;
-        for (int a = 0; a < BOARD_SIZE; ++a)
-            for (int b = 0; b < BOARD_SIZE; ++b)
+        for (int a = 0; a < BOARD_SIZE_X; ++a)
+            for (int b = 0; b < BOARD_SIZE_Y; ++b)
             {
                 SnakePosition p (a,b);
                 SnakeDirection d = this->get(p);
@@ -135,7 +133,8 @@ public:
 
 protected:
     SnakeDirection& find_random_empty_position () {
-        assert(snake_size < BOARD_SIZE*BOARD_SIZE);
+
+        assert(snake_size < BOARD_SIZE_X*BOARD_SIZE_Y);
 
         // first try
         for (int i = 0; i < 10; ++i) {
@@ -152,10 +151,10 @@ protected:
         //int target_found = std::uniform_int_distribution<int>(
         //        0, BOARD_SIZE*BOARD_SIZE-snake_size-1)(random_generator);
         int target_found = std::uniform_int_distribution<int>(
-                0, BOARD_SIZE*BOARD_SIZE-snake_size-1)(random_generator);
+                0, BOARD_SIZE_X*BOARD_SIZE_Y-snake_size-1)(random_generator);
         int found = 0;
-        for (int a = 0; a < BOARD_SIZE; ++a)
-            for (int b = 0; b < BOARD_SIZE; ++b)
+        for (int a = 0; a < BOARD_SIZE_X; ++a)
+            for (int b = 0; b < BOARD_SIZE_Y; ++b)
             {
                 SnakePosition pos(a,b);
                 if (pos == head)
@@ -167,10 +166,11 @@ protected:
                     return actual;
             }
 
+        throw;
     }
 
 private:
-    using SnakePosition = Position<BOARD_SIZE>;
+    using SnakePosition = Position<BOARD_SIZE_X, BOARD_SIZE_Y>;
     SnakePosition head, tail;
     bool done;
     int snake_size, generated_foods;

@@ -35,7 +35,7 @@ Direction get_user_direction() {
 using namespace std;
 
 int main () {
-    Snake<> snake;
+    Snake<8,16> snake;
 
     while (not snake.game_finished()) {
         snake.debug_print();
