@@ -10,9 +10,10 @@ class Position {
 public:
     Position(): x(0), y(0) {}
     Position(int x, int y): x(x), y(y) {}
-    Position(int v): x(v % BOARD_SIZE_Y), y(v / BOARD_SIZE_Y) {}
+    Position(int v): x(v % BOARD_SIZE_X), y(v / BOARD_SIZE_X) {}
 
-    bool on_board () { return x >= 0 and y >= 0 and x < BOARD_SIZE_X and y < BOARD_SIZE_Y; }
+    bool on_board() {return x >= 0 and y >= 0 and x < BOARD_SIZE_X and y < BOARD_SIZE_Y;}
+    int  to_index() {assert(on_board()); return x + y*BOARD_SIZE_X;}
     
     bool operator== (Position p){ return x == p.x and y == p.y; }
 
@@ -31,8 +32,7 @@ public:
 
     template<int BOARD_SIZE_X, int BOARD_SIZE_Y>
     Position<BOARD_SIZE_X, BOARD_SIZE_Y> operator+(Position<BOARD_SIZE_X, BOARD_SIZE_Y> p) {
-        p.x += x;
-        p.y += y;
+        p.x += x; p.y += y;
         return p;
     }
 
@@ -50,15 +50,14 @@ protected:
     void clean () { position.fill(Block()); }
     
     Block& get(Position<BOARD_SIZE_X, BOARD_SIZE_Y> p) {
-        assert(on_board(p));
-        return position[p.x + p.y*BOARD_SIZE_Y];
+        return position[p.to_index()];
     }
 
 public:
     void debug_print() {
         for (int a = 0; a < BOARD_SIZE_Y; ++a) {
             for (int b = 0; b < BOARD_SIZE_X; ++b) {
-                std::cout << position[a*BOARD_SIZE_Y + b];
+                std::cout << position[a*BOARD_SIZE_X + b];
             }
             std::cout << "\n";
         }
