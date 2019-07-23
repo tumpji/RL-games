@@ -30,7 +30,8 @@ foreach(size 5)
 
     target_compile_definitions(${CURNAME} PUBLIC DEF_BOARD_SIZE_X=${size} DEF_BOARD_SIZE_Y=${size} NAME=snake_${size}_${size}) 
     target_include_directories(${CURNAME} PUBLIC ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
-    target_link_libraries(${CURNAME} PUBLIC ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    target_link_libraries(${CURNAME} PUBLIC ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} libboost_numpy-py3.so)
+
 endforeach(size)
 
 include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/../board/)
