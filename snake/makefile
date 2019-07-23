@@ -1,9 +1,10 @@
 
+BUILD_DIR=build
+
 all:
-	@mkdir build &2>/dev/null  || true 
-	@pwd
-	echo "hoj"
-	echo $(cd build; pwd)
+	@mkdir ${BUILD_DIR} 1>&2 2>/dev/null || true
+	cd ${BUILD_DIR}; cmake ..; make
+	
 
 
 
