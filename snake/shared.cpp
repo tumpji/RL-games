@@ -3,7 +3,7 @@
 
 
 int test () {
-    Snake<10,10,1> h;
+    Snake<DEF_BOARD_SIZE_X,DEF_BOARD_SIZE_Y,1> h;
 
     return 1;
 }
