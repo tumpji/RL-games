@@ -15,10 +15,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -O0 -g3 -ggdb")
 add_executable(snake_interactive test.cpp ../board/board.cpp)
 add_library(snake_10_10.so ../board/board.cpp shared.cpp)
 
-target_include_directories(snake_interactive PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../board/)
-target_include_directories(snake_10_10.so PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../board/)
 
-
-
+include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/../board/)
 
 
